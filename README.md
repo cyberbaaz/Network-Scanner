@@ -9,8 +9,9 @@ Discover all devices in the network
      
  Use *-h* for options help 
 
-## You may need to install scapy for python3**
+## You may need to install scapy & requests module for python3*
 	pip install scapy-python3
+	pip install requests
 
 > You can contribute to the code
 
