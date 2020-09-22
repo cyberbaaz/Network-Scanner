@@ -1,5 +1,7 @@
 import scapy.all as scapy
 import optparse
+import requests
+#from requests.exceptions import Timeout
 
 
 def scan(ip):
@@ -21,10 +23,18 @@ def scan(ip):
 
 
 def print_result(client_list):
-    print("-----------------------------------------")
-    print("IP\t\t\tMAC Address\n-----------------------------------------")
+    print("-"*88)
+    print("IP\t\tMAC Address\t\ttime/length\t\tVendor")
+    print("-"*88)
     for client in client_list:
-        print(client["ip"] +"\t\t" + client["mac"])
+        vendor=requests.get('http://api.macvendors.com/' + client["mac"])
+        exec_time = str(round(vendor.elapsed.total_seconds(),3))
+        if vendor.status_code!=200:
+            vendor_err="Not Found"
+            print(client["ip"] +"\t" + client["mac"] + "\t" + exec_time + ","+str(vendor.headers['content-length']) + "\t\t" + vendor_err)
+        else:
+            print(client["ip"] +"\t" + client["mac"] + "\t" + exec_time + ","+str(vendor.headers['content-length']) + "\t\t" + vendor.text)
+
 
 
 def get_args():
@@ -36,7 +46,9 @@ def get_args():
     return option
 
 
+list_ven = []
 options = get_args()
 
 scan_result = scan(options.target)
 print_result(scan_result)
+
